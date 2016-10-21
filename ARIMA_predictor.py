@@ -112,14 +112,21 @@ fig = sm.graphics.tsa.plot_acf(df.seasonal_first_difference.iloc[13:], lags=40, 
 ax2 = fig.add_subplot(212)
 fig = sm.graphics.tsa.plot_pacf(df.seasonal_first_difference.iloc[13:], lags=40, ax=ax2)
 
-#make and the parameters for the model 
-#mod = sm.tsa.statespace.SARIMAX(df.riders, trend='n', order=(0,1,0), seasonal_order=(0,1,1,12))
-#results = mod.fit()
-#print results.summary()
-#
-#mod = sm.tsa.statespace.SARIMAX(df.riders, trend='n', order=(0,1,0), seasonal_order=(1,1,1,12))
-#results = mod.fit()
-#print results.summary()
+
+# this is the nsteps ahead predictor function
+from statsmodels.tsa.arima_model import _arma_predict_out_of_sample
+y=df.riders
+res = sm.tsa.ARMA(y, (3, 2)).fit(trend="nc")
+
+
+make and the parameters for the model 
+mod = sm.tsa.statespace.SARIMAX(df.riders, trend='n', order=(0,1,0), seasonal_order=(0,1,1,12))
+results = mod.fit()
+print results.summary()
+
+mod = sm.tsa.statespace.SARIMAX(df.riders, trend='n', order=(0,1,0), seasonal_order=(1,1,1,12))
+results = mod.fit()
+print results.summary()
 
 #use the model to make prediction on the time series
 df['forecast'] = results.predict(start = 102, end= 114, dynamic= True)  
